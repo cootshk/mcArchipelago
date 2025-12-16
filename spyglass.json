@@ -1,0 +1,9 @@
+{
+    "env": {
+        "gameVersion": "1.21.11",
+        "dataSource": "GitHub",
+        "dependencies": [
+            "@vanilla-mcdoc"
+        ]
+    }
+}

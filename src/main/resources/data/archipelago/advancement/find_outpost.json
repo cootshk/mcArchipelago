@@ -1,0 +1,40 @@
+{
+    "parent": "minecraft:adventure/voluntary_exile",
+    "criteria": {
+        "fortress": {
+            "conditions": {
+                "player": [
+                    {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                            "location": {
+                                "structures": "minecraft:pillager_outpost"
+                            }
+                        }
+                    }
+                ]
+            },
+            "trigger": "minecraft:location"
+        }
+    },
+    "display": {
+        "description": {
+            "translate": "archipelago:advancements.adventure.find_outpost.description"
+        },
+        "icon": {
+            "count": 1,
+            "id": "minecraft:crossbow"
+        },
+        "title": {
+            "translate": "archipelago:advancements.adventure.find_outpost.title"
+        },
+        "hidden": false
+    },
+    "requirements": [
+        [
+            "fortress"
+        ]
+    ],
+    "sends_telemetry_event": false
+}
