@@ -1,33 +1,65 @@
 package io.github.cootshk.archipelago.client
 
+import com.google.gson.Gson
+import io.github.archipelagomw.flags.ItemsHandling
 import io.github.cootshk.archipelago.managers.ConfigManager
+import io.github.cootshk.archipelago.managers.GoalManager
+import io.github.cootshk.archipelago.managers.ItemManager
 import io.github.archipelagomw.Client as APClient
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
+import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
-import net.minecraft.client.multiplayer.chat.LoggedChatEvent
 import net.minecraft.network.chat.ChatType
 import net.minecraft.network.chat.PlayerChatMessage
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import org.apache.logging.log4j.LogManager
+import org.lwjgl.glfw.GLFW
 import java.lang.Exception
+import java.nio.file.Files
+import kotlin.io.path.Path
 
 object ArchipelagoClient : ClientModInitializer, DedicatedServerModInitializer, APClient() {
 
+    val path = Path("Archipelago")
+    private val gson = Gson()
     private val logger = LogManager.getLogger()
+
     override fun onInitializeServer() = onInitializeClient()
-    override fun onInitializeClient() {
+    override fun onInitializeClient() { // treat this as the initializer because it's loaded when Fabric has set everything else up
         logger.info("Loading AP Client...")
+
         this.game = "minecraft"
+        itemsHandlingFlags = ItemsHandling.SEND_ITEMS or ItemsHandling.SEND_OWN_ITEMS or ItemsHandling.SEND_STARTING_INVENTORY
+
+        // Save Data
+        if (!Files.exists(path)) {
+            Files.createDirectories(path)
+        }
 
 
         // Events
         ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted)
         ServerLifecycleEvents.SERVER_STOPPED.register(this::onServerStopped)
         ServerMessageEvents.CHAT_MESSAGE.register(this::onChatMessage)
+
+        // debug, remove this
+        val key = KeyMapping("key.archipelago.enable", GLFW.GLFW_KEY_N, KeyMapping.Category.MISC)
+        val key2 = KeyMapping("key.archipelago.disable", GLFW.GLFW_KEY_M, KeyMapping.Category.MISC)
+        ClientTickEvents.END_CLIENT_TICK.register { client ->
+            if (key.isDown) {
+                GoalManager.bossesRequired = true
+                ItemManager.updateLore()
+            }
+            if (key2.isDown) {
+                GoalManager.bossesRequired = false
+                ItemManager.updateLore()
+            }
+        }
     }
 
     override fun onError(ex: Exception) {

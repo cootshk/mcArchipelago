@@ -6,6 +6,7 @@ fun get(key: String): String? = project.property(key) as String?
 
 plugins {
     kotlin("jvm") version "2.2.21"
+    kotlin("plugin.serialization") version "2.3.0"
     id("fabric-loom") version "1.14-SNAPSHOT"
     id("maven-publish")
 }
@@ -46,6 +47,9 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${get("fabric_version")}")
 
     implementation("io.github.archipelagomw:Java-Client:0.2.1")
+
+    // Kotlin
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 }
 
 tasks.processResources {

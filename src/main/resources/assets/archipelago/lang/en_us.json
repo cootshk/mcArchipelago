@@ -2,5 +2,7 @@
     "archipelago:advancements.adventure.find_village.title": "Civilization!",
     "archipelago:advancements.adventure.find_village.description": "Stumble across a friendly village.",
     "archipelago:advancements.adventure.find_outpost.title": "Involuntary Exile",
-    "archipelago:advancements.adventure.find_outpost.description": "Discover a Pillager Outpost."
+    "archipelago:advancements.adventure.find_outpost.description": "Discover a Pillager Outpost.",
+    "archipelago:goal.wither.lore.required": "todo: add wither lore",
+    "archipelago:goal.dragon.lore.required": "todo: add dragon lore"
 }
