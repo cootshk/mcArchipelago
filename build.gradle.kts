@@ -35,12 +35,19 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
+    maven("https://maven.parchmentmc.org") {
+        name = "ParchmentMC"
+    }
 }
 
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft("com.mojang:minecraft:${get("minecraft_version")}")
-    mappings(loom.officialMojangMappings())
+    @Suppress("UnstableApiUsage")
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.21.11:2025.12.20@zip")
+    })
     modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${get("kotlin_loader_version")}")
 
