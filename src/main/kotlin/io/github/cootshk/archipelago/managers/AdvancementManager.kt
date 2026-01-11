@@ -39,7 +39,7 @@ object AdvancementManager {
 
     fun addAdvancement(id: Long) {
         earnedAdvancements.add(id)
-        APRandomizer.getAP().checkLocation(id)
+//        APRandomizer.getAP().checkLocation(id)
         GoalManager.updateGoal(true)
         WorldData.getInstance().addLocation(id)
         syncAllAdvancements()
@@ -47,7 +47,7 @@ object AdvancementManager {
 
     fun resendAdvancements() {
         for (earnedAdvancement in earnedAdvancements) {
-            APRandomizer.getAP().checkLocation(earnedAdvancement)
+//            APRandomizer.getAP().checkLocation(earnedAdvancement)
         }
     }
 

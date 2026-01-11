@@ -26,10 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @Mixin(ItemStack.class)
-public class MixinItemStack implements ItemStackMixin {
-    @Unique
-    private ItemStack stack() { return (ItemStack) (Object) this; }
-
+public abstract class MixinItemStack implements ItemStackMixin {
     @Unique
     private final Item[] wither_items = new Item[] {
             Items.WITHER_SKELETON_SKULL,
@@ -61,13 +58,16 @@ public class MixinItemStack implements ItemStackMixin {
     @Shadow
     @Final PatchedDataComponentMap components;
 
+    @Shadow
+    public abstract Item getItem();
+
     @Unique
     public void archipelago$updateLore() {
         // noinspection ConstantValue
         if (lore == null) return;
 
         LogManager.getLogger().info("[Archipelago] Lore: {}", lore);
-        generateLore(stack().getItem());
+        generateLore(this.getItem());
         if (lore.isEmpty()) {
             this.components.remove(DataComponents.LORE);
         } else {

@@ -2,7 +2,9 @@ package io.github.cootshk.archipelago.client
 
 import com.google.gson.Gson
 import io.github.archipelagomw.flags.ItemsHandling
+import io.github.cootshk.archipelago.Archipelago
 import io.github.cootshk.archipelago.managers.ConfigManager
+import io.github.cootshk.archipelago.managers.EventManager
 import io.github.cootshk.archipelago.managers.GoalManager
 import io.github.cootshk.archipelago.managers.ItemManager
 import io.github.archipelagomw.Client as APClient
@@ -10,6 +12,7 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
@@ -17,11 +20,13 @@ import net.minecraft.network.chat.ChatType
 import net.minecraft.network.chat.PlayerChatMessage
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.player.Player
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.glfw.GLFW
 import java.lang.Exception
 import java.nio.file.Files
 import kotlin.io.path.Path
+import kotlin.reflect.jvm.reflect
 
 object ArchipelagoClient : ClientModInitializer, DedicatedServerModInitializer, APClient() {
 
@@ -44,6 +49,7 @@ object ArchipelagoClient : ClientModInitializer, DedicatedServerModInitializer, 
 
         // Events
         ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted)
+        ServerTickEvents.END_SERVER_TICK.register(this::onServerTick)
         ServerLifecycleEvents.SERVER_STOPPED.register(this::onServerStopped)
         ServerMessageEvents.CHAT_MESSAGE.register(this::onChatMessage)
 
@@ -73,10 +79,15 @@ object ArchipelagoClient : ClientModInitializer, DedicatedServerModInitializer, 
 
     // Events
     private fun onServerStarted(server: MinecraftServer) {
+        Archipelago.server = server
         setName(ConfigManager.playerName)
         connect()
     }
+    private fun onServerTick(server: MinecraftServer) { // We are safe to ignore `server` here because it's set in onServerStarted and onServerStopped
+        EventManager.runEvents()
+    }
     private fun onServerStopped(server: MinecraftServer) {
+        Archipelago.server = server
         disconnect()
     }
     private fun onChatMessage(message: PlayerChatMessage, player: ServerPlayer, bound: ChatType.Bound) {
